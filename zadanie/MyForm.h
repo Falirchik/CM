@@ -62,8 +62,8 @@ namespace zadanie {
 
 	private: System::Windows::Forms::Label^ label6;
 
-	private: System::Windows::Forms::TextBox^ textBox6;
-	private: System::Windows::Forms::Label^ label5;
+
+
 
 	private: System::Windows::Forms::Label^ label7;
 	private: System::Windows::Forms::Label^ label8;
@@ -72,6 +72,11 @@ namespace zadanie {
 	private: System::Windows::Forms::DataGridViewTextBoxColumn^ u_table;
 	private: System::Windows::Forms::DataGridViewTextBoxColumn^ OLP_table;
 	private: System::Windows::Forms::DataGridViewTextBoxColumn^ h_table;
+	private: System::Windows::Forms::TextBox^ textBox6;
+	private: System::Windows::Forms::Label^ label5;
+	private: System::Windows::Forms::Label^ label9;
+	private: System::Windows::Forms::TextBox^ textBox7;
+	private: System::Windows::Forms::Label^ label10;
 
 
 
@@ -121,10 +126,13 @@ namespace zadanie {
 			this->label3 = (gcnew System::Windows::Forms::Label());
 			this->label4 = (gcnew System::Windows::Forms::Label());
 			this->label6 = (gcnew System::Windows::Forms::Label());
-			this->textBox6 = (gcnew System::Windows::Forms::TextBox());
-			this->label5 = (gcnew System::Windows::Forms::Label());
 			this->label7 = (gcnew System::Windows::Forms::Label());
 			this->label8 = (gcnew System::Windows::Forms::Label());
+			this->textBox6 = (gcnew System::Windows::Forms::TextBox());
+			this->label5 = (gcnew System::Windows::Forms::Label());
+			this->label9 = (gcnew System::Windows::Forms::Label());
+			this->textBox7 = (gcnew System::Windows::Forms::TextBox());
+			this->label10 = (gcnew System::Windows::Forms::Label());
 			(cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->pictureBox1))->BeginInit();
 			(cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->pictureBox2))->BeginInit();
 			(cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->dataGridView1))->BeginInit();
@@ -312,23 +320,6 @@ namespace zadanie {
 			this->label6->Text = L"Начальный шаг";
 			this->label6->Click += gcnew System::EventHandler(this, &MyForm::label6_Click);
 			// 
-			// textBox6
-			// 
-			this->textBox6->Location = System::Drawing::Point(152, 411);
-			this->textBox6->Name = L"textBox6";
-			this->textBox6->Size = System::Drawing::Size(75, 20);
-			this->textBox6->TabIndex = 18;
-			this->textBox6->Text = L"3";
-			// 
-			// label5
-			// 
-			this->label5->AutoSize = true;
-			this->label5->Location = System::Drawing::Point(110, 414);
-			this->label5->Name = L"label5";
-			this->label5->Size = System::Drawing::Size(36, 13);
-			this->label5->TabIndex = 19;
-			this->label5->Text = L"X max";
-			// 
 			// label7
 			// 
 			this->label7->AutoSize = true;
@@ -353,15 +344,62 @@ namespace zadanie {
 			this->label8->TabIndex = 21;
 			this->label8->Text = L"Параметры системы";
 			// 
+			// textBox6
+			// 
+			this->textBox6->Location = System::Drawing::Point(152, 411);
+			this->textBox6->Name = L"textBox6";
+			this->textBox6->Size = System::Drawing::Size(75, 20);
+			this->textBox6->TabIndex = 22;
+			this->textBox6->Text = L"100";
+			// 
+			// label5
+			// 
+			this->label5->AutoSize = true;
+			this->label5->Location = System::Drawing::Point(112, 417);
+			this->label5->Name = L"label5";
+			this->label5->Size = System::Drawing::Size(34, 13);
+			this->label5->TabIndex = 23;
+			this->label5->Text = L"Nmax";
+			// 
+			// label9
+			// 
+			this->label9->AutoSize = true;
+			this->label9->Location = System::Drawing::Point(233, 417);
+			this->label9->Name = L"label9";
+			this->label9->Size = System::Drawing::Size(171, 13);
+			this->label9->TabIndex = 24;
+			this->label9->Text = L"- максимальное число итераций";
+			// 
+			// textBox7
+			// 
+			this->textBox7->Location = System::Drawing::Point(329, 372);
+			this->textBox7->Name = L"textBox7";
+			this->textBox7->Size = System::Drawing::Size(75, 20);
+			this->textBox7->TabIndex = 25;
+			this->textBox7->Text = L"0.1";
+			this->textBox7->TextChanged += gcnew System::EventHandler(this, &MyForm::textBox7_TextChanged_2);
+			// 
+			// label10
+			// 
+			this->label10->AutoSize = true;
+			this->label10->Location = System::Drawing::Point(252, 368);
+			this->label10->Name = L"label10";
+			this->label10->Size = System::Drawing::Size(71, 26);
+			this->label10->TabIndex = 26;
+			this->label10->Text = L"Допуск для\r\nуровня воды";
+			// 
 			// MyForm
 			// 
 			this->AutoScaleDimensions = System::Drawing::SizeF(6, 13);
 			this->AutoScaleMode = System::Windows::Forms::AutoScaleMode::Font;
 			this->ClientSize = System::Drawing::Size(1184, 683);
-			this->Controls->Add(this->label8);
-			this->Controls->Add(this->label7);
+			this->Controls->Add(this->label10);
+			this->Controls->Add(this->textBox7);
+			this->Controls->Add(this->label9);
 			this->Controls->Add(this->label5);
 			this->Controls->Add(this->textBox6);
+			this->Controls->Add(this->label8);
+			this->Controls->Add(this->label7);
 			this->Controls->Add(this->label6);
 			this->Controls->Add(this->label4);
 			this->Controls->Add(this->label3);
@@ -476,13 +514,13 @@ private: System::Void button1_Click(System::Object^ sender, System::EventArgs^ e
 
 	// Интервал, где есть данные
 	double xmin = 0;
-	double xmax = Convert::ToDouble(textBox6->Text);
+	double diap = Convert::ToDouble(textBox7->Text);
 	double h = Convert::ToDouble(textBox1->Text);
 	double eps = Convert::ToDouble(textBox5->Text);
 	double sigma = Convert::ToDouble(textBox3->Text);
 	double alfa = Convert::ToDouble(textBox4->Text);
 	double xmin_limit = xmin;
-	double xmax_limit = xmax;
+	int N = Convert::ToDouble(textBox6->Text);
 	panel->Title->Text = "График зависимости уровня воды от времени"; //название графика
 
 
@@ -502,8 +540,7 @@ private: System::Void button1_Click(System::Object^ sender, System::EventArgs^ e
 	dataGridView1->Rows[0]->Cells[0]->Value = i-1;
 	dataGridView1->Rows[0]->Cells[1]->Value = x;
 	dataGridView1->Rows[0]->Cells[2]->Value = u0;
-	for (; x <= xmax && !F; )
-	{
+	for (;  !F && i<=N; )	{
 		// Рунге-Кутта
 		hControl = errorControl(u0, h, eps, errorLoc, sigma,alfa);
 
@@ -523,52 +560,13 @@ private: System::Void button1_Click(System::Object^ sender, System::EventArgs^ e
 		h = hControl;
 
 	}
-	//if (F) {
-	//	for (;!F/;) {
-	//		if (abs(u0) <= eps) {
-	//			dataGridView1->Rows->Add();
-	//			dataGridView1->Rows[i]->Cells[0]->Value = i - 1;
-	//			dataGridView1->Rows[i]->Cells[1]->Value = x;
-	//			dataGridView1->Rows[i]->Cells[2]->Value = u0;
-	//		}
-	//		else {
-	//			hControl = errorControl(u0, h, eps, errorLoc, sigma, alfa);
-
-	//			if ((h <= hControl)/* && (F2)*/)
-	//			{//Добавление на график
-	//				x = x + h;
-	//				f1_list->Add(x, u0);
-	//				//Печать в таблицу
-	//				dataGridView1->Rows->Add();
-	//				dataGridView1->Rows[i]->Cells[0]->Value = i;
-	//				dataGridView1->Rows[i]->Cells[1]->Value = x;
-	//				dataGridView1->Rows[i]->Cells[2]->Value = u0;
-	//				dataGridView1->Rows[i]->Cells[3]->Value = errorLoc;
-	//				dataGridView1->Rows[i]->Cells[4]->Value = h;
-	//				i++;
-
-	//			}
-	//			h = hControl;
-
-	//		}
-	//	}
-	//	/*x = x + h;
-	//	f1_list->Add(x, u0);
-
-	//	dataGridView1->Rows->Add();
-	//	dataGridView1->Rows[i]->Cells[0]->Value = i;
-	//	dataGridView1->Rows[i]->Cells[1]->Value = x;
-	//	dataGridView1->Rows[i]->Cells[2]->Value = u0;*/
-	//	//dataGridView1->Rows[i]->Cells[3]->Value = error;
-	//	//dataGridView1->Rows[i]->Cells[4]->Value = u0;
-
-	//}
+	
 	F = false; // обновление флага для перезапуска программыЫ
 	F2 = true;
 	LineItem Curve1 = panel->AddCurve("u(x)", f1_list, Color::Blue, SymbolType::None); // имя линии графика
 	// Устанавливаем интересующий нас интервал по оси X
 	panel->XAxis->Scale->Min = xmin_limit;
-	panel->XAxis->Scale->Max = xmax_limit;
+
 	/*
 		// Устанавливаем интересующий нас интервал по оси Y
 		panel->YAxis->Scale->Min = ymin_limit;
@@ -590,6 +588,8 @@ private: System::Void label3_Click(System::Object^ sender, System::EventArgs^ e)
 private: System::Void textBox7_TextChanged(System::Object^ sender, System::EventArgs^ e) {
 }
 private: System::Void textBox7_TextChanged_1(System::Object^ sender, System::EventArgs^ e) {
+}
+private: System::Void textBox7_TextChanged_2(System::Object^ sender, System::EventArgs^ e) {
 }
 };
 }
