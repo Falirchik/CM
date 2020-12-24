@@ -6,6 +6,7 @@ using namespace std;
 
 const double PI = acos(-1);
 bool F = false; //если un положительное 
+bool F2 = true; // для "парковки"
 
 namespace zadanie {
 
@@ -71,8 +72,10 @@ namespace zadanie {
 	private: System::Windows::Forms::DataGridViewTextBoxColumn^ u_table;
 	private: System::Windows::Forms::DataGridViewTextBoxColumn^ OLP_table;
 	private: System::Windows::Forms::DataGridViewTextBoxColumn^ h_table;
-	private: System::Windows::Forms::TextBox^ textBox7;
-	private: System::Windows::Forms::Label^ label9;
+
+
+
+
 
 
 
@@ -122,8 +125,6 @@ namespace zadanie {
 			this->label5 = (gcnew System::Windows::Forms::Label());
 			this->label7 = (gcnew System::Windows::Forms::Label());
 			this->label8 = (gcnew System::Windows::Forms::Label());
-			this->textBox7 = (gcnew System::Windows::Forms::TextBox());
-			this->label9 = (gcnew System::Windows::Forms::Label());
 			(cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->pictureBox1))->BeginInit();
 			(cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->pictureBox2))->BeginInit();
 			(cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->dataGridView1))->BeginInit();
@@ -219,6 +220,8 @@ namespace zadanie {
 			// 
 			// dataGridView1
 			// 
+			this->dataGridView1->BackgroundColor = System::Drawing::SystemColors::ActiveCaption;
+			this->dataGridView1->BorderStyle = System::Windows::Forms::BorderStyle::Fixed3D;
 			this->dataGridView1->ColumnHeadersHeightSizeMode = System::Windows::Forms::DataGridViewColumnHeadersHeightSizeMode::AutoSize;
 			this->dataGridView1->Columns->AddRange(gcnew cli::array< System::Windows::Forms::DataGridViewColumn^  >(5) {
 				this->Шаг, this->x_table,
@@ -226,7 +229,7 @@ namespace zadanie {
 			});
 			this->dataGridView1->Location = System::Drawing::Point(490, 12);
 			this->dataGridView1->Name = L"dataGridView1";
-			this->dataGridView1->Size = System::Drawing::Size(723, 290);
+			this->dataGridView1->Size = System::Drawing::Size(668, 290);
 			this->dataGridView1->TabIndex = 11;
 			this->dataGridView1->CellContentClick += gcnew System::Windows::Forms::DataGridViewCellEventHandler(this, &MyForm::dataGridView1_CellContentClick);
 			// 
@@ -350,30 +353,11 @@ namespace zadanie {
 			this->label8->TabIndex = 21;
 			this->label8->Text = L"Параметры системы";
 			// 
-			// textBox7
-			// 
-			this->textBox7->Location = System::Drawing::Point(334, 372);
-			this->textBox7->Name = L"textBox7";
-			this->textBox7->Size = System::Drawing::Size(75, 20);
-			this->textBox7->TabIndex = 22;
-			this->textBox7->Text = L"1e-5";
-			// 
-			// label9
-			// 
-			this->label9->AutoSize = true;
-			this->label9->Location = System::Drawing::Point(233, 368);
-			this->label9->Name = L"label9";
-			this->label9->Size = System::Drawing::Size(95, 39);
-			this->label9->TabIndex = 23;
-			this->label9->Text = L"eps2 - параметр \r\nконтроля уровня \r\nводы";
-			// 
 			// MyForm
 			// 
 			this->AutoScaleDimensions = System::Drawing::SizeF(6, 13);
 			this->AutoScaleMode = System::Windows::Forms::AutoScaleMode::Font;
-			this->ClientSize = System::Drawing::Size(1153, 683);
-			this->Controls->Add(this->label9);
-			this->Controls->Add(this->textBox7);
+			this->ClientSize = System::Drawing::Size(1184, 683);
 			this->Controls->Add(this->label8);
 			this->Controls->Add(this->label7);
 			this->Controls->Add(this->label5);
@@ -539,34 +523,48 @@ private: System::Void button1_Click(System::Object^ sender, System::EventArgs^ e
 		h = hControl;
 
 	}
-	if (F) {
+	//if (F) {
+	//	for (;!F/;) {
+	//		if (abs(u0) <= eps) {
+	//			dataGridView1->Rows->Add();
+	//			dataGridView1->Rows[i]->Cells[0]->Value = i - 1;
+	//			dataGridView1->Rows[i]->Cells[1]->Value = x;
+	//			dataGridView1->Rows[i]->Cells[2]->Value = u0;
+	//		}
+	//		else {
+	//			hControl = errorControl(u0, h, eps, errorLoc, sigma, alfa);
 
-		//for (; u0 >= 0;)
-		//	hControl = errorControl(u0, h, eps, errorLoc, sigma, alfa);
-		//if (h <= hControl) {
-		//	x += h;
-		//	f1_list->Add(x, u0);
-		//	//Печать в таблицу
-		//	dataGridView1->Rows->Add();
-		//	dataGridView1->Rows[i]->Cells[0]->Value = i;
-		//	dataGridView1->Rows[i]->Cells[1]->Value = x;
-		//	dataGridView1->Rows[i]->Cells[2]->Value = u0;
-		//	dataGridView1->Rows[i]->Cells[4]->Value = errorLoc;
-		//	dataGridView1->Rows[i]->Cells[5]->Value = h;
-		//	i++;
-		//}
-		x = x + h;
-		f1_list->Add(x, u0);
+	//			if ((h <= hControl)/* && (F2)*/)
+	//			{//Добавление на график
+	//				x = x + h;
+	//				f1_list->Add(x, u0);
+	//				//Печать в таблицу
+	//				dataGridView1->Rows->Add();
+	//				dataGridView1->Rows[i]->Cells[0]->Value = i;
+	//				dataGridView1->Rows[i]->Cells[1]->Value = x;
+	//				dataGridView1->Rows[i]->Cells[2]->Value = u0;
+	//				dataGridView1->Rows[i]->Cells[3]->Value = errorLoc;
+	//				dataGridView1->Rows[i]->Cells[4]->Value = h;
+	//				i++;
 
-		dataGridView1->Rows->Add();
-		dataGridView1->Rows[i]->Cells[0]->Value = i;
-		dataGridView1->Rows[i]->Cells[1]->Value = x;
-		dataGridView1->Rows[i]->Cells[2]->Value = u0;
-		//dataGridView1->Rows[i]->Cells[3]->Value = error;
-		//dataGridView1->Rows[i]->Cells[4]->Value = u0;
+	//			}
+	//			h = hControl;
 
-	}
+	//		}
+	//	}
+	//	/*x = x + h;
+	//	f1_list->Add(x, u0);
+
+	//	dataGridView1->Rows->Add();
+	//	dataGridView1->Rows[i]->Cells[0]->Value = i;
+	//	dataGridView1->Rows[i]->Cells[1]->Value = x;
+	//	dataGridView1->Rows[i]->Cells[2]->Value = u0;*/
+	//	//dataGridView1->Rows[i]->Cells[3]->Value = error;
+	//	//dataGridView1->Rows[i]->Cells[4]->Value = u0;
+
+	//}
 	F = false; // обновление флага для перезапуска программыЫ
+	F2 = true;
 	LineItem Curve1 = panel->AddCurve("u(x)", f1_list, Color::Blue, SymbolType::None); // имя линии графика
 	// Устанавливаем интересующий нас интервал по оси X
 	panel->XAxis->Scale->Min = xmin_limit;
@@ -588,6 +586,10 @@ private: System::Void label2_Click(System::Object^ sender, System::EventArgs^ e)
 private: System::Void label6_Click(System::Object^ sender, System::EventArgs^ e) {
 }
 private: System::Void label3_Click(System::Object^ sender, System::EventArgs^ e) {
+}
+private: System::Void textBox7_TextChanged(System::Object^ sender, System::EventArgs^ e) {
+}
+private: System::Void textBox7_TextChanged_1(System::Object^ sender, System::EventArgs^ e) {
 }
 };
 }
