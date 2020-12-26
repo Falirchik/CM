@@ -5,8 +5,8 @@
 using namespace std;
 
 const double PI = acos(-1);
-bool F = false; //если un положительное 
-bool F2 = true; // для "парковки"
+bool F1 = true; //Un - положительное?
+bool F2 = false; //Un в диапозоне нуля
 
 namespace zadanie {
 
@@ -384,9 +384,9 @@ namespace zadanie {
 			this->label10->AutoSize = true;
 			this->label10->Location = System::Drawing::Point(252, 368);
 			this->label10->Name = L"label10";
-			this->label10->Size = System::Drawing::Size(71, 26);
+			this->label10->Size = System::Drawing::Size(74, 26);
 			this->label10->TabIndex = 26;
-			this->label10->Text = L"Допуск для\r\nуровня воды";
+			this->label10->Text = L"Допуск для\r\nобласти нуля\r\n";
 			// 
 			// MyForm
 			// 
@@ -429,34 +429,36 @@ namespace zadanie {
 #pragma endregion
 
 	private: 
-		double f(double un, double sigma, double alfa) { 
+		double f(double un, double sigma, double alfa, double diap) { 
 			double g = 9.8;
 			double C = -0.6 * sigma * (sqrt(2 * g) /(tan(0.5 * alfa) * tan(0.5 * alfa) * PI));
-			if (un < 0) F = true; //un стал отрицательным, корень из отрицательного превращается в NaN
+			if (un < 0) F1 = false;
 			return (C / sqrt(un * un * un));
 			
 		}
 
-		double RungeKutta(double h, double un, double sigma, double alfa) {
+		double RungeKutta(double h, double un, double sigma, double alfa, double diap) {
 			double coef[3];
 			double res;
-			coef[0] = f(un, sigma, alfa);
-			coef[1] = f(un + (0.5 * h * coef[0]), sigma, alfa);
-			coef[2] = f(un + h * (-coef[0] + 2 * coef[1]), sigma, alfa);
+			coef[0] = f(un, sigma, alfa,diap);
+			coef[1] = f(un + (0.5 * h * coef[0]), sigma, alfa, diap);
+			coef[2] = f(un + h * (-coef[0] + 2 * coef[1]), sigma, alfa, diap);
 			res = un + h / 6 * (coef[0] + 4 * coef[1] + coef[2]);
+			if (res < 0) F1 = false; //un стал отрицательным, корень из отрицательного превращается в NaN
+			if (res > 0 && res <= diap) F2 = true;//un в диапозоне нуля
 			return res;
 	}
 
-		double errorControl(double& u0, double h, double eps, double& locErr, double sigma, double alfa)
+		double errorControl(double& u0, double h, double eps, double& locErr, double sigma, double alfa, double diap )
 		{
 			double  u, u_, S;
 			double rk1, rk2;
-			rk1 = RungeKutta(h,u0,sigma,alfa);
+			rk1 = RungeKutta(h,u0,sigma,alfa, diap);
 			u = rk1;
 			u_ = u0;
 			for (int i = 0; i < 2; i++)
 			{
-				rk2 = RungeKutta(h*0.5, u_,sigma,alfa);
+				rk2 = RungeKutta(h*0.5, u_,sigma,alfa, diap);
 				u_ = rk2;
 			}
 			/*if (F) return (-1);*/
@@ -477,6 +479,7 @@ namespace zadanie {
 				return h;
 			}
 		}
+
 
 		
 	private: System::Void zedGraphControl1_Load(System::Object^ sender, System::EventArgs^ e) {
@@ -530,21 +533,21 @@ private: System::Void button1_Click(System::Object^ sender, System::EventArgs^ e
 	// Список точек
 	int i = 1;
 	double errorLoc;
-	double u0, hControl; 
+	double u0, hControl, UPred; 
 	dataGridView1->Rows->Clear();
 	u0 = Convert::ToDouble(textBox2->Text);
-	
+	UPred = u0;
 	double x = xmin;
 	f1_list->Add(x, u0);
 	dataGridView1->Rows->Add();
 	dataGridView1->Rows[0]->Cells[0]->Value = i-1;
 	dataGridView1->Rows[0]->Cells[1]->Value = x;
 	dataGridView1->Rows[0]->Cells[2]->Value = u0;
-	for (;  !F && i<=N; )	{
+	for (;  F1 && i<=N &&!F2; )	{ // работаем, пока Un>diap>0 и не кончилось число итераций
 		// Рунге-Кутта
-		hControl = errorControl(u0, h, eps, errorLoc, sigma,alfa);
+		hControl = errorControl(u0, h, eps, errorLoc, sigma,alfa, diap);
 
-		if ((h <= hControl) && (!F))
+		if ((h <= hControl) && (!F2))
 		{//Добавление на график
 			x = x + h;
 			f1_list->Add(x, u0);
@@ -557,12 +560,140 @@ private: System::Void button1_Click(System::Object^ sender, System::EventArgs^ e
 			dataGridView1->Rows[i]->Cells[4]->Value = h;
 			i++;
 		}
+		UPred = u0;
 		h = hControl;
+	}
+	//вылетели с отрицательным значением либо в диапозоне
+	for (; !F1;) {
+		F1 = true;
+		u0 = UPred;
+		int j = 0;
+	
+		for (; !F2 && i <= N &&F1;) { //пока не диапозон нуля и есть итерации
+			
+			if (j <= 1) {
+				h = h / 2;
+				j++;
+			}
+			else {
+				h = 4 * h;
+				j = 0;
+			}
+			UPred = u0;
+			u0 = RungeKutta(h, u0, sigma, alfa, diap);
+			if (F1&&!F2) {
+				x = x + h;
+				f1_list->Add(x, u0);
+				//Печать в таблицу
+				dataGridView1->Rows->Add();
+				dataGridView1->Rows[i]->Cells[0]->Value = i;
+				dataGridView1->Rows[i]->Cells[1]->Value = x;
+				dataGridView1->Rows[i]->Cells[2]->Value = u0;
+				dataGridView1->Rows[i]->Cells[4]->Value = h;
+				i++;
 
+			}
+			else if (F2) {
+				x = x + h;
+				f1_list->Add(x, u0);
+				//Печать в таблицу
+				dataGridView1->Rows->Add();
+				dataGridView1->Rows[i]->Cells[0]->Value = i;
+				dataGridView1->Rows[i]->Cells[1]->Value = x;
+				dataGridView1->Rows[i]->Cells[2]->Value = u0;
+				dataGridView1->Rows[i]->Cells[4]->Value = h;
+				i++;
+			}
+			
+		}
 	}
 	
-	F = false; // обновление флага для перезапуска программыЫ
-	F2 = true;
+	if (F2&&!F1) {
+		u0 = RungeKutta(h, u0, sigma, alfa, diap);
+		x = x + h;
+		f1_list->Add(x, u0);
+		//Печать в таблицу
+		dataGridView1->Rows->Add();
+		dataGridView1->Rows[i]->Cells[0]->Value = i;
+		dataGridView1->Rows[i]->Cells[1]->Value = x;
+		dataGridView1->Rows[i]->Cells[2]->Value = u0;
+		dataGridView1->Rows[i]->Cells[4]->Value = h;
+	}
+	if (F2) {
+	tryAgain: {
+		u0 = RungeKutta(h, u0, sigma, alfa, diap);
+		if (F1) {
+			x = x + h;
+			f1_list->Add(x, u0);
+			//Печать в таблицу
+			dataGridView1->Rows->Add();
+			dataGridView1->Rows[i]->Cells[0]->Value = i;
+			dataGridView1->Rows[i]->Cells[1]->Value = x;
+			dataGridView1->Rows[i]->Cells[2]->Value = u0;
+			dataGridView1->Rows[i]->Cells[4]->Value = h;
+		}
+		UPred = u0;
+		if (u0 > diap) goto tryAgain; }
+	}
+	//	h=2*h;
+	//	u0= RungeKutta(h, u0, sigma, alfa, diap);
+	//	x = x + h;
+	//	f1_list->Add(x, u0);
+	//	//Печать в таблицу
+	//	dataGridView1->Rows->Add();
+	//	dataGridView1->Rows[i]->Cells[0]->Value = i;
+	//	dataGridView1->Rows[i]->Cells[1]->Value = x;
+	//	dataGridView1->Rows[i]->Cells[2]->Value = u0;
+	//	dataGridView1->Rows[i]->Cells[4]->Value = h;
+	//	
+	//}
+	//if (!F1) {
+	//	{
+	//		u0 = UPred;
+	//		F1 = true;
+	//		int j = 0;
+	//		for (; !F2 && i <= N && F1;) { //пока не диапозон нуля и есть итерации
+	//			u0 = UPred;
+	//			if (j < 2) {
+	//				h = h / 2;
+	//				j++;
+	//			}
+	//			else {
+	//				h = 4 * h;
+	//				j = 0;
+	//			}
+	//			u0 = RungeKutta(h, u0, sigma, alfa, diap);
+	//			if (F1 && !F2) {
+	//				x = x + h;
+	//				f1_list->Add(x, u0);
+	//				//Печать в таблицу
+	//				dataGridView1->Rows->Add();
+	//				dataGridView1->Rows[i]->Cells[0]->Value = i;
+	//				dataGridView1->Rows[i]->Cells[1]->Value = x;
+	//				dataGridView1->Rows[i]->Cells[2]->Value = u0;
+	//				dataGridView1->Rows[i]->Cells[4]->Value = h;
+	//				i++;
+
+	//			}
+	//			else if (F2) {
+	//				x = x + h;
+	//				f1_list->Add(x, u0);
+	//				//Печать в таблицу
+	//				dataGridView1->Rows->Add();
+	//				dataGridView1->Rows[i]->Cells[0]->Value = i;
+	//				dataGridView1->Rows[i]->Cells[1]->Value = x;
+	//				dataGridView1->Rows[i]->Cells[2]->Value = u0;
+	//				dataGridView1->Rows[i]->Cells[4]->Value = h;
+	//				i++;
+	//			}
+	//			UPred = u0;
+	//		}
+	//	}
+
+	//}
+
+	F1 = true; // обновление флага для перезапуска программыЫ
+	F2 = false;
 	LineItem Curve1 = panel->AddCurve("u(x)", f1_list, Color::Blue, SymbolType::None); // имя линии графика
 	// Устанавливаем интересующий нас интервал по оси X
 	panel->XAxis->Scale->Min = xmin_limit;
