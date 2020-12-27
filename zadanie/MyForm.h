@@ -582,6 +582,21 @@ private: System::Void button1_Click(System::Object^ sender, System::EventArgs^ e
 			UPred = u0;
 			u0 = RungeKutta(h, u0, sigma, alfa, diap);
 			if (F1&&!F2) {
+				double  u, u_, S;
+				double rk1, rk2;
+				rk1 = RungeKutta(h, UPred, sigma, alfa, diap);
+				u = rk1;
+				u_ = UPred;
+				for (int i = 0; i < 2; i++)
+				{
+					rk2 = RungeKutta(h * 0.5, u_, sigma, alfa, diap);
+					u_ = rk2;
+				}
+				/*if (F) return (-1);*/
+				S = abs(u_ - u);
+
+				errorLoc = S * 16;
+
 				x = x + h;
 				f1_list->Add(x, u0);
 				//Печать в таблицу
@@ -589,11 +604,27 @@ private: System::Void button1_Click(System::Object^ sender, System::EventArgs^ e
 				dataGridView1->Rows[i]->Cells[0]->Value = i;
 				dataGridView1->Rows[i]->Cells[1]->Value = x;
 				dataGridView1->Rows[i]->Cells[2]->Value = u0;
+				dataGridView1->Rows[i]->Cells[3]->Value = errorLoc;
 				dataGridView1->Rows[i]->Cells[4]->Value = h;
 				i++;
 
 			}
 			else if (F2) {
+				double  u, u_, S;
+				double rk1, rk2;
+				rk1 = RungeKutta(h, UPred, sigma, alfa, diap);
+				u = rk1;
+				u_ = UPred;
+				for (int i = 0; i < 2; i++)
+				{
+					rk2 = RungeKutta(h * 0.5, u_, sigma, alfa, diap);
+					u_ = rk2;
+				}
+				/*if (F) return (-1);*/
+				S = abs(u_ - u);
+
+				errorLoc = S * 16;
+
 				x = x + h;
 				f1_list->Add(x, u0);
 				//Печать в таблицу
@@ -601,6 +632,7 @@ private: System::Void button1_Click(System::Object^ sender, System::EventArgs^ e
 				dataGridView1->Rows[i]->Cells[0]->Value = i;
 				dataGridView1->Rows[i]->Cells[1]->Value = x;
 				dataGridView1->Rows[i]->Cells[2]->Value = u0;
+				dataGridView1->Rows[i]->Cells[3]->Value = errorLoc;
 				dataGridView1->Rows[i]->Cells[4]->Value = h;
 				i++;
 			}
@@ -610,6 +642,21 @@ private: System::Void button1_Click(System::Object^ sender, System::EventArgs^ e
 	
 	if (F2&&!F1) {
 		u0 = RungeKutta(h, u0, sigma, alfa, diap);
+		double  u, u_, S;
+		double rk1, rk2;
+		rk1 = RungeKutta(h, UPred, sigma, alfa, diap);
+		u = rk1;
+		u_ = UPred;
+		for (int i = 0; i < 2; i++)
+		{
+			rk2 = RungeKutta(h * 0.5, u_, sigma, alfa, diap);
+			u_ = rk2;
+		}
+		/*if (F) return (-1);*/
+		S = abs(u_ - u);
+
+		errorLoc = S * 16;
+
 		x = x + h;
 		f1_list->Add(x, u0);
 		//Печать в таблицу
@@ -617,12 +664,28 @@ private: System::Void button1_Click(System::Object^ sender, System::EventArgs^ e
 		dataGridView1->Rows[i]->Cells[0]->Value = i;
 		dataGridView1->Rows[i]->Cells[1]->Value = x;
 		dataGridView1->Rows[i]->Cells[2]->Value = u0;
+		dataGridView1->Rows[i]->Cells[3]->Value = errorLoc;
 		dataGridView1->Rows[i]->Cells[4]->Value = h;
 	}
 	if (F2) {
 	tryAgain: {
 		u0 = RungeKutta(h, u0, sigma, alfa, diap);
 		if (F1) {
+			double  u, u_, S;
+			double rk1, rk2;
+			rk1 = RungeKutta(h, u0, sigma, alfa, diap);
+			u = rk1;
+			u_ = u0;
+			for (int i = 0; i < 2; i++)
+			{
+				rk2 = RungeKutta(h * 0.5, u_, sigma, alfa, diap);
+				u_ = rk2;
+			}
+			/*if (F) return (-1);*/
+			S = abs(u_ - u);
+
+			errorLoc = S * 16;
+
 			x = x + h;
 			f1_list->Add(x, u0);
 			//Печать в таблицу
@@ -630,6 +693,7 @@ private: System::Void button1_Click(System::Object^ sender, System::EventArgs^ e
 			dataGridView1->Rows[i]->Cells[0]->Value = i;
 			dataGridView1->Rows[i]->Cells[1]->Value = x;
 			dataGridView1->Rows[i]->Cells[2]->Value = u0;
+			dataGridView1->Rows[i]->Cells[3]->Value = errorLoc;
 			dataGridView1->Rows[i]->Cells[4]->Value = h;
 		}
 		UPred = u0;
